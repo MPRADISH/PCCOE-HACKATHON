@@ -19,10 +19,20 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..700&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" crossorigin href="./assets/index-Bdw3dcgW.css">
+    <link rel="manifest" href="./manifest.webmanifest">
+    <script id="vite-plugin-pwa:register-sw" type="module" src="./registerSW.js"></script>
   </head>
   <body class="bg-[#F9F8F3] text-[#182218] antialiased selection:bg-[#d3b44a]/30 selection:text-[#182218]">
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <script type="module">
+      if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+        import('/src/main.tsx');
+      } else {
+        const scriptUrl = new URL('./assets/index-CRg55TQy.js', import.meta.url).href;
+        import(scriptUrl);
+      }
+    </script>
   </body>
 </html>
 

@@ -77,6 +77,7 @@ export interface AdvisoryResponse {
   advisoryText: string;
   kvkReference: string;
   actionItems: string[];
+  waterSavingEstimate?: string;
   generatedAt: string;
   [key: string]: unknown;
 }

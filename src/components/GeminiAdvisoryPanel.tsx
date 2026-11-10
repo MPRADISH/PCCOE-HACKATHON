@@ -167,14 +167,14 @@ export function GeminiAdvisoryPanel({
           </div>
 
           {/* Action Items */}
-          {advisory.actionItems.length > 0 && (
+          {(advisory.actionItems as string[]).length > 0 && (
             <div>
               <h4 className="text-xs font-bold text-[#182218]/70 mb-2 flex items-center gap-1.5">
                 <CheckCircle2 className="w-3.5 h-3.5 text-[#06ce06]" />
                 {t.actions}
               </h4>
               <ul className="space-y-1.5">
-                {advisory.actionItems.map((item, idx) => (
+                {(advisory.actionItems as string[]).map((item, idx) => (
                   <li
                     key={idx}
                     className="flex items-start gap-2 text-xs text-[#182218]/85"
@@ -202,7 +202,7 @@ export function GeminiAdvisoryPanel({
           {advisory.waterSavingEstimate && (
             <div className="flex items-center gap-2 text-xs font-semibold text-[#059605]">
               <span className="w-2 h-2 rounded-full bg-[#06ce06]" />
-              {t.savings}: {advisory.waterSavingEstimate}
+              {t.savings}: {String(advisory.waterSavingEstimate)}
             </div>
           )}
 

@@ -15,6 +15,8 @@ import {
   Map as MapIcon,
   Grid,
   Volume2,
+  VolumeX,
+  Loader2,
   MessageSquare,
   Smartphone,
   Share2,
@@ -143,6 +145,23 @@ export const HeatMapSection: React.FC<HeatMapSectionProps> = ({
   const [irrigationMethod, setIrrigationMethod] = useState<IrrigationMethod>('flood');
   const [advisoryPreviewLang, setAdvisoryPreviewLang] = useState<Language | 'sync'>('sync');
   const [speechActive, setSpeechActive] = useState(false);
+  const [speechLoading, setSpeechLoading] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Stop any active audio playback when taluka or advisory language changes
+  useEffect(() => {
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+      setSpeechActive(false);
+      setSpeechLoading(false);
+    };
+  }, [selectedTaluka.id, advisoryPreviewLang]);
 
   // SMS & WhatsApp Notification Hub state
   const [channel, setChannel] = useState<NotificationChannel>('both');
@@ -251,21 +270,103 @@ export const HeatMapSection: React.FC<HeatMapSectionProps> = ({
   };
 
   const handleSpeakAdvisory = () => {
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(
-        advisoryResult.vernacularAdvisory[effectiveAdvisoryLang]
-      );
-      utterance.lang =
-        effectiveAdvisoryLang === 'mr'
-          ? 'mr-IN'
-          : effectiveAdvisoryLang === 'hi'
-          ? 'hi-IN'
-          : 'en-IN';
-      utterance.onend = () => setSpeechActive(false);
-      utterance.onerror = () => setSpeechActive(false);
-      setSpeechActive(true);
-      window.speechSynthesis.speak(utterance);
+    // If currently playing or loading, stop playback
+    if (speechActive || speechLoading) {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+        audioRef.current = null;
+      }
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+      setSpeechActive(false);
+      setSpeechLoading(false);
+      return;
+    }
+
+    const text = advisoryResult.vernacularAdvisory[effectiveAdvisoryLang];
+    if (!text) return;
+
+    setSpeechLoading(true);
+
+    const playOfflineFallback = () => {
+      if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+        setSpeechLoading(false);
+        setSpeechActive(false);
+        return;
+      }
+      try {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        const voices = window.speechSynthesis.getVoices();
+        const findVoice = (prefix: string) =>
+          voices.find((v) =>
+            v.lang.toLowerCase().replace('_', '-').startsWith(prefix.toLowerCase())
+          );
+
+        if (effectiveAdvisoryLang === 'mr') {
+          // Native Marathi voice if available, or Hindi (shares Devanagari script phonetics)
+          const mrVoice = findVoice('mr');
+          const hiVoice = findVoice('hi');
+          utterance.voice = mrVoice || hiVoice || null;
+          utterance.lang = mrVoice ? 'mr-IN' : (hiVoice ? 'hi-IN' : 'mr-IN');
+        } else if (effectiveAdvisoryLang === 'hi') {
+          const hiVoice = findVoice('hi');
+          utterance.voice = hiVoice || null;
+          utterance.lang = 'hi-IN';
+        } else {
+          const enVoice = findVoice('en-in') || findVoice('en');
+          utterance.voice = enVoice || null;
+          utterance.lang = 'en-IN';
+        }
+
+        utterance.rate = 0.9;
+        utterance.onstart = () => {
+          setSpeechLoading(false);
+          setSpeechActive(true);
+        };
+        utterance.onend = () => {
+          setSpeechActive(false);
+          setSpeechLoading(false);
+        };
+        utterance.onerror = () => {
+          setSpeechActive(false);
+          setSpeechLoading(false);
+        };
+        window.speechSynthesis.speak(utterance);
+      } catch {
+        setSpeechActive(false);
+        setSpeechLoading(false);
+      }
+    };
+
+    // Try backend high-quality Marathi/Hindi audio stream first
+    try {
+      const audioUrl = `/api/tts?text=${encodeURIComponent(text)}&lang=${effectiveAdvisoryLang}`;
+      const audio = new Audio(audioUrl);
+      audioRef.current = audio;
+
+      audio.oncanplaythrough = () => {
+        setSpeechLoading(false);
+        setSpeechActive(true);
+        audio.play().catch(() => {
+          playOfflineFallback();
+        });
+      };
+
+      audio.onended = () => {
+        setSpeechActive(false);
+        setSpeechLoading(false);
+        audioRef.current = null;
+      };
+
+      audio.onerror = () => {
+        // Fall back to SpeechSynthesis (e.g. offline PWA mode)
+        playOfflineFallback();
+      };
+    } catch {
+      playOfflineFallback();
     }
   };
 
@@ -1183,12 +1284,35 @@ export const HeatMapSection: React.FC<HeatMapSectionProps> = ({
                   <button
                     type="button"
                     onClick={handleSpeakAdvisory}
+                    title={
+                      speechActive
+                        ? effectiveAdvisoryLang === 'mr'
+                          ? 'आवाज थांबवा'
+                          : effectiveAdvisoryLang === 'hi'
+                          ? 'आवाज़ रोकें'
+                          : 'Stop voice'
+                        : effectiveAdvisoryLang === 'mr'
+                        ? 'मराठी आवाज ऐका'
+                        : effectiveAdvisoryLang === 'hi'
+                        ? 'हिन्दी आवाज़ सुनें'
+                        : 'Listen to voice'
+                    }
                     aria-label="Listen to vernacular voice advisory"
-                    className={`p-1 rounded-xs border border-[#182218]/15 cursor-pointer transition-colors ${
-                      speechActive ? 'bg-[#06ce06] text-[#182218]' : 'bg-white text-[#182218]'
+                    className={`p-1 rounded-xs border border-[#182218]/15 cursor-pointer transition-all flex items-center justify-center ${
+                      speechActive
+                        ? 'bg-[#06ce06] text-[#182218] animate-pulse ring-2 ring-[#06ce06]/50'
+                        : speechLoading
+                        ? 'bg-[#EFECE3] text-[#182218] opacity-80'
+                        : 'bg-white text-[#182218] hover:bg-[#EFECE3]'
                     }`}
                   >
-                    <Volume2 className="w-3.5 h-3.5" />
+                    {speechLoading ? (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    ) : speechActive ? (
+                      <VolumeX className="w-3.5 h-3.5" />
+                    ) : (
+                      <Volume2 className="w-3.5 h-3.5" />
+                    )}
                   </button>
                 </div>
               </div>

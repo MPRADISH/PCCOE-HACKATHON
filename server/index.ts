@@ -13,6 +13,7 @@ import diagnosticRoutes from './routes/diagnostic.js';
 import notificationRoutes from './routes/notification.js';
 import telemetryRoutes from './routes/telemetry.js';
 import committeeRoutes from './routes/committee.js';
+import ttsRoutes from './routes/tts.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -61,6 +62,7 @@ app.use('/api/diagnostic', diagnosticRoutes);
 app.use('/api/notification', notificationRoutes);
 app.use('/api/telemetry', telemetryRoutes);
 app.use('/api/committee', committeeRoutes);
+app.use('/api/tts', ttsRoutes);
 
 // ── Health Check ──────────────────────────────────────────────
 app.get('/api/health', (_req, res) => {

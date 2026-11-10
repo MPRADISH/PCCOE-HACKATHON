@@ -93,7 +93,7 @@ define(['./workbox-8d0d8005'], (function (workbox) { 'use strict';
     "revision": "5564835b567c69305651b1d2aa91fe7f"
   }, {
     "url": "index.html",
-    "revision": "032e11c623ab05ee1ee1654cbbe5eb9e"
+    "revision": "17fde8a57a8ad44b94caccc8eb2aa8ce"
   }, {
     "url": "icon.svg",
     "revision": "2240a94d07d41215e35cc9728a9b5121"
@@ -107,10 +107,13 @@ define(['./workbox-8d0d8005'], (function (workbox) { 'use strict';
     "url": "assets/main-Bw1VuU6A.css",
     "revision": null
   }, {
-    "url": "assets/index-CRg55TQy.js",
+    "url": "assets/index-CiPbZvVG.css",
     "revision": null
   }, {
-    "url": "assets/index-Bdw3dcgW.css",
+    "url": "assets/index-CRg55TQy-hxtSJKcV.js",
+    "revision": null
+  }, {
+    "url": "assets/index-BxQFhgb1.js",
     "revision": null
   }, {
     "url": "assets/drip_irrigated_healthy_crop_1794107197074-CXkoKdIB.jpg",

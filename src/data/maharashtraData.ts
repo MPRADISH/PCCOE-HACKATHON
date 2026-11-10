@@ -1,4 +1,7 @@
 import type { TalukaRecord, Language, CropType } from '../utils/waterEngine';
+import cottonWaterStressImg from '../assets/images/cotton_water_stress_field_1794107194483.jpg';
+import cropLeafDiseaseImg from '../assets/images/crop_leaf_disease_sample_1794107197354.jpg';
+import dripIrrigatedHealthyImg from '../assets/images/drip_irrigated_healthy_crop_1794107197074.jpg';
 
 export const MAHARASHTRA_TALUKAS: TalukaRecord[] = [
   {
@@ -535,7 +538,7 @@ export interface DiagnosticSample {
 export const DIAGNOSTIC_SAMPLES: DiagnosticSample[] = [
   {
     id: 'sample-water-stress',
-    imageUrl: '/src/assets/images/cotton_water_stress_field_1794107194483.jpg',
+    imageUrl: cottonWaterStressImg,
     title: {
       en: 'Cotton Leaf Wilting on Cracked Black Regur Soil',
       mr: 'भेगा पडलेल्या काळ्या जमिनीतील कापूस पिकाची मरगळ',
@@ -575,7 +578,7 @@ export const DIAGNOSTIC_SAMPLES: DiagnosticSample[] = [
   },
   {
     id: 'sample-foliar-disease',
-    imageUrl: '/src/assets/images/crop_leaf_disease_sample_1794107197354.jpg',
+    imageUrl: cropLeafDiseaseImg,
     title: {
       en: 'Alternaria Leaf Spot on Damp Soil Surface',
       mr: 'ओलसर जमिनीवरील पानांवरील करपा / ठिपक्यांचा रोग',
@@ -615,7 +618,7 @@ export const DIAGNOSTIC_SAMPLES: DiagnosticSample[] = [
   },
   {
     id: 'sample-healthy-drip',
-    imageUrl: '/src/assets/images/drip_irrigated_healthy_crop_1794107197074.jpg',
+    imageUrl: dripIrrigatedHealthyImg,
     title: {
       en: 'Optimal Turgor & Paired-Row Drip Wetting Zone',
       mr: 'जोड-ओळ ठिबक सिंचनाखालील निरोगी व तजेलदार पीक',

@@ -93,7 +93,7 @@ define(['./workbox-8d0d8005'], (function (workbox) { 'use strict';
     "revision": "5564835b567c69305651b1d2aa91fe7f"
   }, {
     "url": "index.html",
-    "revision": "82b5b58603b3d93a35eb2fbd2cb70a82"
+    "revision": "032e11c623ab05ee1ee1654cbbe5eb9e"
   }, {
     "url": "icon.svg",
     "revision": "2240a94d07d41215e35cc9728a9b5121"
@@ -101,10 +101,16 @@ define(['./workbox-8d0d8005'], (function (workbox) { 'use strict';
     "url": "apple-touch-icon.png",
     "revision": "2dcdfc6604f0508c1760c7e920de4f81"
   }, {
-    "url": "assets/index-C7oxRjnh.css",
+    "url": "assets/main-HMNPL7Ty.js",
     "revision": null
   }, {
-    "url": "assets/index-BLNYb9J7.js",
+    "url": "assets/main-Bw1VuU6A.css",
+    "revision": null
+  }, {
+    "url": "assets/index-CRg55TQy.js",
+    "revision": null
+  }, {
+    "url": "assets/index-Bdw3dcgW.css",
     "revision": null
   }, {
     "url": "assets/drip_irrigated_healthy_crop_1794107197074-CXkoKdIB.jpg",

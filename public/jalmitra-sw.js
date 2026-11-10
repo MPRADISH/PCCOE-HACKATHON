@@ -99,9 +99,14 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Don't intercept API calls or Vite dev internals
+  if (url.pathname.startsWith('/api/') || url.pathname.startsWith('/@') || url.pathname.includes('node_modules')) {
+    return;
+  }
+
   // Cache-first with background refresh (Stale-While-Revalidate) for static assets & fonts
   const isStaticAsset =
-    url.origin === self.location.origin ||
+    url.pathname.match(/\.(js|css|html|png|jpg|jpeg|svg|ico|woff|woff2|webp)$/i) ||
     url.hostname.includes('fonts.googleapis.com') ||
     url.hostname.includes('fonts.gstatic.com');
 

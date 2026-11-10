@@ -7,6 +7,17 @@ export default defineConfig(() => {
   return {
     base: './',
     plugins: [
+      {
+        name: 'dev-html-transform',
+        transformIndexHtml(html, ctx) {
+          if (ctx.server) {
+            return html
+              .replace(/\.\/assets\/main-[a-zA-Z0-9_\-]+\.js/g, '/src/main.tsx')
+              .replace(/<link rel="stylesheet" crossorigin href="\.\/assets\/main-[a-zA-Z0-9_\-]+\.css">/g, '');
+          }
+          return html;
+        },
+      },
       react(),
       tailwindcss(),
       VitePWA({
